@@ -1,4 +1,4 @@
-function [x, y] = UCDmeshing(fnx, fny, radius1, arad, brad, ix, iy)
+function [x, y] = DCmeshing(fnx, fny, radius1, arad, brad, xd, yd)
 
 theta = (pi/2)/(fnx-1);
 
@@ -15,17 +15,17 @@ end
 
 %interior
 for n = 1:fny-1
-    uc(n) = 1/(interp1(ix, iy, (n-1)/(fny-1))*(fny-1));
+    m(n) = 1/interp1(xd, yd, n/(fny-1));
 end
 
-uc = uc/sum(uc);
+m = m/sum(m);
 
 for i=1:fnx
     xleng = x(i, fny) - x(i, 1);
     yleng = y(i, fny) - y(i, 1);
-    for j=2:fny-1
-        x(i,j) = x(i,j-1)+xleng*uc(j-1);
-        y(i,j) = y(i,j-1)+yleng*uc(j-1);
+    for j=1:fny-2
+        x(i,j+1) = x(i,j)+xleng*m(j);
+        y(i,j+1) = y(i,j)+yleng*m(j);
     end
 end
 
@@ -36,6 +36,6 @@ for j=1:fny
 end
 
 figure
-plot(ix, iy, 'k', 'linewidth', 1)
-xlabel('j-Direction')
+plot(xd, yd, 'k', 'linewidth', 1.5)
+xlabel('Stretch Direction')
 ylabel('Densitiy')
